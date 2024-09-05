@@ -1,0 +1,14 @@
+protoc-gen-openapiv2  
+langchain-pinecone pinecone-notebooks
+pinecone
+langchain-community
+langchain-google-genai
+Flask
+firebase-admin
+pypdf
+pyPDF2
+pinecone-client
+google-generativeai
+python-dotenv
+google-auth
+google-cloud
