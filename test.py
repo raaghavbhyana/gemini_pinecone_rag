@@ -25,16 +25,16 @@ GEMINI_API_KEY = os.getenv("GOOGLE_API_KEY")
 app = Flask(__name__)
 
 # Initialize Firebase
-cred = credentials.Certificate(r"E:\assignment\test-32cd4-firebase-adminsdk-a4b9r-2f05d82bde.json")
+cred = credentials.Certificate(FIREBASE_CREDENTIALS_PATH)
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 
 # Initialize Pinecone
 pc = Pinecone(api_key=PINECONE_API_KEY)
 
-@app.route('/')
-def home():
-    return render_template('index.html')
+# @app.route('/')
+# def home():
+#     return render_template('index.html')
 
 @app.route('/upload', methods=['POST'])
 def upload_document():
@@ -92,7 +92,7 @@ def upload_document():
     vectors = []
     for i, (embedding, text) in enumerate(zip(embeddings, texts)):
         vectors.append({
-            "id": f"{chat_name}",  # Unique ID for each vector
+            "id": f"{chat_name}_{i}",  # Unique ID for each vector
             "values": embedding,  # Embedding vector
             "metadata": {"text": text}  # Text chunk stored as metadata
         })
@@ -130,10 +130,11 @@ def query_document():
         if not doc.exists:
             return jsonify({'error': 'Chat name not found'}), 404
         
-        embedding_model = GoogleGenerativeAIEmbeddings(model="models/text-embedding-004", task_type="retrieval_query")
-        embeddings = embedding_model.embed_documents([question])
-        query_vector = embeddings[0]
-        retriever= index.query(vector=query_vector, top_k=5,include_values=True,
+        embedding_model = GoogleGenerativeAIEmbeddings(model="models/text-embedding-004")
+        embeddings = embedding_model.embed_query(question)
+
+        
+        retriever= index.query(vector=embeddings, top_k=5,include_values=False,
             include_metadata=True)
         
         documents = [Document(page_content=match['metadata']['text'], metadata=match['metadata']) for match in retriever['matches']]
