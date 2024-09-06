@@ -25,7 +25,7 @@ GEMINI_API_KEY = os.getenv("GOOGLE_API_KEY")
 app = Flask(__name__)
 
 # Initialize Firebase
-cred = credentials.Certificate(FIREBASE_CREDENTIALS_PATH)
+cred = credentials.Certificate(r"E:\assignment\test-32cd4-firebase-adminsdk-a4b9r-2f05d82bde.json")
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 
